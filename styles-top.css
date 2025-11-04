@@ -44,13 +44,14 @@ html,body{
 /* The poster itself: full viewport width, top-aligned, centered */
 .hero-media{
   position:relative; z-index:1; display:block;
-  width:100vw;            /* fill the width – no right gutter */
-  height:auto;            /* keep aspect ratio */
-  max-height:none;
-  object-fit:contain;     /* never crop the poster */
-  object-position:center top; /* show TOP of poster when landing */
-  margin:0 auto;          /* hard center safeguard */
+  width:90vw;                /* trims a little for laptop fit */
+  max-width:1280px;          /* caps width on normal screens */
+  height:auto;
+  object-fit:contain;
+  object-position:center 6%; /* nudges visible area upward */
+  margin:0 auto;
 }
+
 
 /* Footer */
 .footer{
