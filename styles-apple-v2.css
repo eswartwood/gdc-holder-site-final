@@ -1,0 +1,81 @@
+/* === APPLE HERO PRESET — V2 (scrollable + ultra-wide safe) === */
+
+/* Base */
+*{box-sizing:border-box}
+html,body{
+  margin:0; padding:0;
+  height:100%; width:100%;
+  background:#000; color:#e5e5e5;
+  font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;
+  overflow-y:auto;          /* allow page scroll */
+  overflow-x:hidden;        /* no sideways scroll */
+}
+
+/* Full-bleed hero wrapper */
+.hero{
+  position:relative;
+  min-height:92svh;         /* tall, but not hard-locked */
+  width:100%;
+  overflow:hidden;
+  background:#000;
+}
+
+/* Ambient gold drift behind media */
+.hero::before{
+  content:"";
+  position:absolute; inset:0; z-index:0; pointer-events:none;
+  background:
+    radial-gradient(60% 60% at 50% 40%,
+      rgba(255,204,102,0.14) 0%,
+      rgba(255,204,102,0.08) 30%,
+      rgba(0,0,0,0.88) 75%);
+  background-size:200% 200%;
+  animation: driftPos 22s ease-in-out infinite alternate;
+}
+@keyframes driftPos{
+  0%{background-position:40% 40%}
+  50%{background-position:60% 55%}
+  100%{background-position:45% 45%}
+}
+
+/* Cinematic fades */
+@keyframes fadeIn{0%{opacity:0;transform:scale(1.02)}100%{opacity:1;transform:scale(1)}}
+@keyframes glowPulse{
+  0%,100%{filter: drop-shadow(0 0 10px rgba(255,215,0,.18))}
+  50%    {filter: drop-shadow(0 0 22px rgba(255,215,0,.55))}
+}
+
+/* Hero media (Apple style) */
+.hero-media{
+  position:absolute; inset:0; z-index:1;
+  width:100%; height:100%;
+  object-fit:cover;                 /* full-bleed fill by default */
+  object-position:center 34%;       /* focus point; tweak up/down */
+  animation: fadeIn 1.6s ease-out both, glowPulse 12s ease-in-out infinite;
+}
+
+/* Ultra-wide safety: switch to 'contain' so nothing is chopped */
+@media (min-aspect-ratio: 21/9){     /* e.g., 32:9 or super-wide monitors */
+  .hero{
+    min-height:100svh;              /* fill height */
+  }
+  .hero-media{
+    object-fit:contain;             /* show whole poster */
+    object-position:center 10%;
+    background:#000;                /* black bars on the sides */
+  }
+}
+
+/* Mobile tweaks */
+@media (max-width:768px){
+  .hero{ min-height:100svh }
+  .hero-media{ object-position:center 28% }
+}
+
+/* Footer */
+.footer{
+  position:relative; z-index:3;
+  text-align:center; font-size:12px; color:#aaa;
+  padding:12px 0 20px;
+  opacity:0; animation:fadeIn 2.2s ease-out .8s forwards;
+}
