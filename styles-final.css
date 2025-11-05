@@ -13,28 +13,15 @@ html, body {
   overflow-x: hidden;
 }
 
-/* ---------- HERO CONTAINER ---------- */
+/* ---------- HERO IMAGE SECTION ---------- */
 .hero {
-  position: relative;
   width: 100%;
-  height: 92vh; /* fills nearly the full screen */
-  background: #000;
+  min-height: 92vh; /* nearly full screen */
+  background: #000 url("./assets/hero-desktop.png") no-repeat top center;
+  background-size: cover; /* fills screen dynamically */
   display: flex;
   align-items: flex-start;
   justify-content: center;
-  overflow: hidden;
-}
-
-/* ---------- IMAGE INSIDE HERO ---------- */
-.hero::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: url("./assets/hero-desktop.png") no-repeat top center;
-  background-size: cover; /* zooms in a bit — fills screen like Apple */
-  background-color: #000;
-  transform: scale(1.15); /* gentle zoom-in effect to fill space */
-  z-index: 0;
 }
 
 /* ---------- FOOTER ---------- */
@@ -46,15 +33,14 @@ html, body {
   letter-spacing: 0.05em;
   padding: 30px 0;
   background: #000;
-  border-top: 1px solid rgba(255, 215, 0, 0.2); /* subtle gold edge */
+  border-top: 1px solid rgba(255, 215, 0, 0.2);
 }
 
 /* ---------- MOBILE OPTIMIZATION ---------- */
 @media (max-width: 768px) {
-  .hero::before {
-    background: url("./assets/hero-mobile.png") no-repeat top center;
+  .hero {
+    background: #000 url("./assets/hero-mobile.png") no-repeat top center;
     background-size: cover;
-    transform: scale(1.05);
   }
   .footer {
     font-size: 0.85rem;
