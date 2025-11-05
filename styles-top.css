@@ -1,69 +1,56 @@
-/* ===== Reset / base ===== */
+/* Base */
 * { box-sizing: border-box; }
 html, body { height: 100%; }
-body {
-  margin: 0;
+body { margin: 0; background: #000; color: #aaa; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; }
+
+/* Full-bleed stage */
+.frame{
+  min-height: 100svh;
+  display: flex;
+  align-items: flex-start; /* pin to top */
+  justify-content: center;
   background: #000;
-  color: #aaa;
-  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  overflow: hidden; /* crop when we nudge upward */
 }
 
-/* ===== HERO =====
-   Render the poster as a BACKGROUND so we can crop + anchor it.
-   Desktop: hero-desktop.png
-   Mobile: hero-mobile.png
-   We nudge it upward a bit so the globe sits higher.
-*/
-.hero {
-  /* Tweak this to move the image up or down (negative moves up) */
-  --y-offset: -90px;
+/* Poster (image fills viewport) */
+.poster{ width: 100%; height: 100svh; display: block; }
 
-  min-height: 100svh;            /* full viewport height including mobile UI */
+/* Single place to move the image UP (negative = up) */
+:root{ --nudge-desktop: -90px; --nudge-mobile: -40px; }
+
+.poster img{
   width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 0%;    /* top-center anchor */
+  transform: translateY(var(--nudge-desktop));
   display: block;
-
-  background-image: url("assets/hero-desktop.png");
-  background-repeat: no-repeat;
-  background-size: cover;
-  background-position: 50% calc(0% + var(--y-offset)); /* top-center with upward nudge */
-
-  /* Soft vignette so sides look premium on ultrawide */
-  position: relative;
-  isolation: isolate;
 }
-.hero::before {
-  content: "";
-  position: absolute; inset: 0;
+
+/* Subtle edges so ultrawide looks premium */
+.frame::before{
+  content:"";
+  position:absolute; inset:0;
+  pointer-events:none;
   background:
-    radial-gradient(120% 60% at 50% 50%, rgba(0,0,0,0.0), rgba(0,0,0,0.55) 70%),
-    linear-gradient(180deg, rgba(0,0,0,0.15), rgba(0,0,0,0.35));
-  pointer-events: none;
-  z-index: 0;
+    radial-gradient(120% 70% at 50% 50%, rgba(0,0,0,0), rgba(0,0,0,.55) 70%),
+    linear-gradient(180deg, rgba(0,0,0,.12), rgba(0,0,0,.32));
+  z-index:0;
 }
 
-/* ===== Footer ===== */
-.footer {
-  text-align: center;
-  font-size: 12px;
-  padding: 12px 24px 24px;
-  color: #9a9a9a;
+/* Put content above vignette if needed later */
+.poster, .footer{ position: relative; z-index: 1; }
+
+/* Footer */
+.footer{ text-align:center; font-size:12px; padding: 12px 24px 24px; color:#9a9a9a; }
+
+/* Laptop tweak (a touch less nudge) */
+@media (max-width: 1600px) and (min-width: 769px){
+  :root{ --nudge-desktop: -70px; }
 }
 
-/* ===== Mobile swap ===== */
-@media (max-width: 768px) {
-  .hero {
-    background-image: url("assets/hero-mobile.png");
-    /* smaller upward nudge for phones; adjust if you want more/less */
-    --y-offset: -40px;
-    background-position: 50% calc(0% + var(--y-offset));
-  }
-}
-
-/* ===== Laptop cap so the subject doesn’t get too huge ===== */
-@media (max-width: 1600px) and (min-width: 769px) {
-  .hero {
-    /* keep same art but a gentler nudge on common laptops */
-    --y-offset: -70px;
-    background-position: 50% calc(0% + var(--y-offset));
-  }
+/* Mobile image swap + nudge */
+@media (max-width: 768px){
+  .poster img{ transform: translateY(var(--nudge-mobile)); }
 }
