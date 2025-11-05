@@ -1,45 +1,88 @@
-/* Base */
-* { box-sizing: border-box; }
-html, body { height: 100%; }
-body {
-  margin: 0;
-  background: #000;      /* pure black sides */
-  color: #aaa;
-  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+/* Base reset */
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;
+  background:#000;
+  color:#ccc;
+  font:16px system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+  overflow-y:auto;
 }
 
-/* Tweak this number to move the image up or down:
-   smaller % = higher crop (moves image up) */
-:root { --y: 10%; }
-
-/* The stage painted by CSS background so we can crop without editing the PNG */
-.hero {
-  min-height: 100svh;             /* fill the viewport height (mobile-safe) */
-  width: 100%;
-  background: #000 no-repeat center var(--y);
-  background-size: cover;         /* zoom to cover like Apple hero */
-  padding-bottom: 10vh;           /* leave a little scroll before footer */
+/* Stage holds the hero + footer */
+.stage{
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
 }
 
-/* Desktop gets the desktop asset */
-@media (min-width: 769px) {
-  .hero { background-image: url("/hero-desktop.png"); }
+/* Full-bleed hero pinned to the top */
+.hero{
+  position:relative;
+  width:100%;
+  height:100vh;        /* exactly one full screen */
+  overflow:hidden;
+  display:block;
+  background:#000;
 }
 
-/* Mobile gets the mobile asset */
-@media (max-width: 768px) {
-  .hero { background-image: url("/hero-mobile.png"); }
+/* Poster image behavior */
+.hero img{
+  position:absolute;
+  inset:0 auto auto 50%;
+  transform:translateX(-50%);
+  width:100%;
+  height:100%;
+  object-fit:cover;          /* fill without distortion */
+  object-position:center -8vh; /* nudge UP (more negative = higher) */
+  display:block;
 }
 
-/* Footer – tiny, no line */
-.foot {
-  position: fixed;
-  left: 0; right: 0; bottom: 12px;
-  text-align: center;
-  font-size: 12px;
-  color: #ffd24a;
-  opacity: .9;
-  pointer-events: none;
-  user-select: none;
-  border: 0;
+/* Make the side edges feel premium but keep them black overall */
+.hero::before,
+.hero::after{
+  content:"";
+  position:absolute;
+  top:0;bottom:0;
+  width:18vw;                 /* width of the vignette on each side */
+  pointer-events:none;
+  background:
+    radial-gradient(60% 60% at 50% 50%,
+      rgba(255,215,0,.06), rgba(0,0,0,0) 60%);
+  filter:blur(2px);
+  opacity:.45;
+}
+.hero::before{left:0; background:
+  linear-gradient(90deg, rgba(0,0,0,1) 0%, rgba(0,0,0,.85) 30%, rgba(0,0,0,0) 100%),
+  radial-gradient(60% 60% at 50% 50%, rgba(255,215,0,.06), rgba(0,0,0,0) 60%);}
+.hero::after{right:0; background:
+  linear-gradient(270deg, rgba(0,0,0,1) 0%, rgba(0,0,0,.85) 30%, rgba(0,0,0,0) 100%),
+  radial-gradient(60% 60% at 50% 50%, rgba(255,215,0,.06), rgba(0,0,0,0) 60%);}
+
+/* Footer (small + no extra lines) */
+.footer{
+  margin:0;
+  padding:14px 0 18px;
+  text-align:center;
+  color:#d8d8d8;
+  font-size:12px;
+  opacity:.8;
+  background:#000;      /* ensures no stray line shows on some displays */
+  border:0;
+}
+
+/* Wide screens — push image a touch higher */
+@media (min-width: 1200px){
+  .hero img{ object-position:center -10vh; }
+}
+
+/* Smaller laptops — a hair less nudge */
+@media (max-width: 1024px){
+  .hero img{ object-position:center -6vh; }
+}
+
+/* Phones — keep centered, still slightly up */
+@media (max-width: 768px){
+  .hero{ height:100svh; }      /* mobile safe viewport height */
+  .hero img{ object-position:center -4vh; }
 }
