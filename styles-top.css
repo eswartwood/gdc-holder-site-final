@@ -59,13 +59,14 @@ img{display:block}
   width: 90vw;
   max-width: 1280px;
   height: auto;
-  object-fit: cover;        /* fills container */
-  object-position: center 25%; /* 👈 shifts image upward, crops bottom */
-  margin: 0 auto;
-  clip-path: inset(10% 0 6% 0); /* 👈 crops 8% top & bottom */
+  object-fit: cover;
+  object-position: center 10%; /* ⬆️ lifts image much higher */
+  margin: -60px auto 0; /* ⬆️ physically shifts image upward */
+  clip-path: inset(12% 0 4% 0); /* crops more top, less bottom */
   filter: drop-shadow(0 0 12px rgba(255,215,0,0.2));
   animation: fadeIn 1s ease-out both;
 }
+
 
 
 /* Laptops */
