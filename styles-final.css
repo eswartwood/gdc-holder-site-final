@@ -1,61 +1,115 @@
-/* ===== Base ===== */
+/* ========== Base / Reset ========== */
 * { box-sizing: border-box; }
-html, body { height: 100%; margin: 0; background:#000; color:#ccc; font: 16px system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; }
-
-/* ===== Stage: fills screen, stacks hero + footer ===== */
-.stage {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  background: #000;           /* solid black borders/sides */
+html, body { height: 100%; }
+body {
+  margin: 0;
+  background: #000;    /* black “letterbox” around the poster */
+  color: #ccc;
+  font: 16px system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  overflow-y: auto;
 }
 
-/* ===== Frame: exactly one viewport tall minus footer, crops overflow ===== */
-.frame {
+/* ========== One knob to move artwork up/down ========== */
+/* Negative raises the image; positive lowers it. */
+:root{
+  --poster-shift: -10vh; /* try -8vh, -12vh, etc. */
+}
+
+/* ========== Stage ========== */
+.stage{
   position: relative;
-  height: calc(100vh - 44px); /* footer height (adjust if you change footer) */
-  overflow: hidden;
-  display: flex;
-  align-items: flex-start;     /* top-align image */
-  justify-content: center;     /* center horizontally */
+  min-height: 100svh; /* handles mobile browser chrome nicely */
+  display: grid;
+  grid-template-rows: 1fr auto; /* main area + footer */
+}
+
+/* ========== Background Poster (Apple-style) ========== */
+/* We draw the hero once, centered, no repeat, with black showing at sides. */
+.bg{
+  position: fixed;         /* lock to the viewport */
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
   background: #000;
 }
 
-/* ===== Hero image ===== */
-.hero {
-  width: min(1200px, 100vw);   /* responsive width, max ~1200px */
-  height: auto;
-  display: block;
-  transform: translateY(-80px);/* <<< raise image (tweak -80 to taste) */
+/* We use a ::before so we can translate it independently (the “shift” knob). */
+.bg::before{
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-repeat: no-repeat;
+  background-position: top center;      /* anchor to the top */
+  background-size: contain;              /* keep full image visible */
+  transform: translateY(var(--poster-shift));
+  will-change: transform;
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
 }
 
-/* Mobile tweak: a little less lift */
-@media (max-width: 768px) {
-  .hero {
-    width: 100vw;
-    transform: translateY(-40px);
+/* Desktop poster source (file lives in /public so we reference /hero-desktop.png) */
+@media (min-width: 769px){
+  .bg::before{
+    background-image: url("/hero-desktop.png");
   }
 }
 
-/* ===== Footer ===== */
-.footer {
-  height: 44px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #ffd34d;
-  font-size: 12px;
-  letter-spacing: .2px;
-  opacity: .9;
-  background: #000;
-  user-select: none;
+/* Mobile poster source */
+@media (max-width: 768px){
+  .bg::before{
+    background-image: url("/hero-mobile.png");
+  }
 }
 
-/* (Optional) soft side glow — comment out if you don’t want it */
-.frame::before, .frame::after{
-  content:"";
-  position:absolute; top:0; bottom:0; width:18px;
-  pointer-events:none; filter: blur(12px); opacity:.22;
+/* ========== Side glow + subtle vignette (tasteful, optional) ========== */
+.fx{
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  /* Soft vertical vignette + faint gold edge glow to feel premium */
+  background:
+    radial-gradient(120% 80% at 50% -10%, rgba(0,0,0,.65) 20%, rgba(0,0,0,0) 60%) /* top fade */,
+    radial-gradient(120% 80% at 50% 110%, rgba(0,0,0,.75) 10%, rgba(0,0,0,0) 50%) /* bottom fade */,
+    linear-gradient(90deg,
+      rgba(255,215,0,.07) 0%, rgba(0,0,0,0) 8%, rgba(0,0,0,0) 92%, rgba(255,215,0,.07) 100%
+    );
 }
-.frame::before{ left:0; background: linear-gradient(90deg, rgba(255,215,64,.35), rgba(0,0,0,0)); }
-.frame::after { right:0; background: linear-gradient(270deg, rgba(255,215,64,.35), rgba(0,0,0,0)); }
+
+/* ========== Content Overlay ========== */
+.content{
+  z-index: 2;
+  /* Keep content centered; empty for now so you just see the poster */
+  display: grid;
+  place-items: center;
+  padding: clamp(16px, 2vw, 32px);
+}
+
+/* If you later drop logo/text here, cap the width nicely */
+.content > *{
+  max-width: min(1100px, 90vw);
+}
+
+/* ========== Footer ========== */
+.footer{
+  z-index: 2;
+  text-align: center;
+  color: rgba(255,255,255,.85);
+  font-size: 12px;
+  letter-spacing: .02em;
+  padding: 16px 12px 20px;
+  mix-blend-mode: normal;
+}
+
+/* ========== Nice-to-haves ========== */
+/* tiny parallax drift (very subtle) — feel free to remove if you want it static */
+@media (prefers-reduced-motion: no-preference){
+  .bg::before{
+    animation: drift 40s linear infinite;
+  }
+  @keyframes drift{
+    0%   { transform: translateY(calc(var(--poster-shift) + 0vh)); }
+    50%  { transform: translateY(calc(var(--poster-shift) + -2vh)); }
+    100% { transform: translateY(calc(var(--poster-shift) + 0vh)); }
+  }
+}
