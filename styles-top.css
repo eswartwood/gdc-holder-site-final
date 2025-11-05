@@ -1,56 +1,69 @@
-/* Reset / base */
+/* ===== Reset / base ===== */
 * { box-sizing: border-box; }
 html, body { height: 100%; }
 body {
   margin: 0;
-  background: #0a0a0a;               /* pure dark backdrop */
-  color: #ddd;
-  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  background: #000;
+  color: #aaa;
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
 }
 
-/* --- Easy “move up” control (negative pulls image upward) --- */
-:root { --yNudge: -120px; }           /* tweak this number to move the hero up/down */
+/* ===== HERO =====
+   Render the poster as a BACKGROUND so we can crop + anchor it.
+   Desktop: hero-desktop.png
+   Mobile: hero-mobile.png
+   We nudge it upward a bit so the globe sits higher.
+*/
+.hero {
+  /* Tweak this to move the image up or down (negative moves up) */
+  --y-offset: -90px;
 
-/* Full-bleed hero */
-.hero{
-  min-height: 100vh;
+  min-height: 100svh;            /* full viewport height including mobile UI */
   width: 100%;
-  /* Desktop image as background. We pin to the TOP and can nudge with var. */
-  background-image: url('assets/hero-desktop.png');
+  display: block;
+
+  background-image: url("assets/hero-desktop.png");
   background-repeat: no-repeat;
-  background-size: cover;             /* fill width nicely */
-  background-position: center var(--yNudge);  /* top + upward nudge */
-}
+  background-size: cover;
+  background-position: 50% calc(0% + var(--y-offset)); /* top-center with upward nudge */
 
-/* Optional: subtle vignette so edges blend with page background */
-.hero::after{
-  content:"";
-  position: absolute;
-  inset: 0;
+  /* Soft vignette so sides look premium on ultrawide */
+  position: relative;
+  isolation: isolate;
+}
+.hero::before {
+  content: "";
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(120% 60% at 50% 50%, rgba(0,0,0,0.0), rgba(0,0,0,0.55) 70%),
+    linear-gradient(180deg, rgba(0,0,0,0.15), rgba(0,0,0,0.35));
   pointer-events: none;
-  background: radial-gradient(60% 60% at 50% 40%, rgba(10,10,10,0) 0%, rgba(10,10,10,0) 55%, rgba(10,10,10,0.55) 100%);
+  z-index: 0;
 }
 
-/* Footer (tiny, centered) */
-.footer{
+/* ===== Footer ===== */
+.footer {
   text-align: center;
-  color: #9aa0a6;
   font-size: 12px;
-  padding: 12px 24px;
+  padding: 12px 24px 24px;
+  color: #9a9a9a;
 }
 
-/* Laptops / normal monitors: slightly less nudge */
-@media (max-width: 1280px){
-  :root { --yNudge: -90px; }
-}
-
-/* Mobile: use the mobile artwork, center it at the top, no negative nudge */
-@media (max-width: 768px){
-  .hero{
-    background-image: url('assets/hero-mobile.png');
-    background-size: contain;         /* keep full poster visible on phones */
-    background-position: center top;  /* start at the very top */
-    background-color: #000;
+/* ===== Mobile swap ===== */
+@media (max-width: 768px) {
+  .hero {
+    background-image: url("assets/hero-mobile.png");
+    /* smaller upward nudge for phones; adjust if you want more/less */
+    --y-offset: -40px;
+    background-position: 50% calc(0% + var(--y-offset));
   }
-  :root { --yNudge: 0px; }
+}
+
+/* ===== Laptop cap so the subject doesn’t get too huge ===== */
+@media (max-width: 1600px) and (min-width: 769px) {
+  .hero {
+    /* keep same art but a gentler nudge on common laptops */
+    --y-offset: -70px;
+    background-position: 50% calc(0% + var(--y-offset));
+  }
 }
