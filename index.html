@@ -2,21 +2,20 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1.0, viewport-fit=cover"
-    />
-    <meta
-      name="description"
-      content="Global Data Capture — Engineering Intelligent Platforms for Over Two Decades."
-    />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <title>Global Data Capture</title>
-    <!-- cache-bust with v param -->
-    <link rel="stylesheet" href="styles-top.css?v=final1" />
+    <meta name="description" content="Global Data Capture — Engineering Intelligent Platforms for Over Two Decades." />
+    <link rel="stylesheet" href="styles-top.css?v=fix10" />
   </head>
   <body>
-    <!-- Full-bleed hero rendered as a background so we can crop/position cleanly -->
-    <main class="hero" role="main" aria-label="Global Data Capture"></main>
+    <main class="frame">
+      <picture class="poster">
+        <!-- Desktop -->
+        <source srcset="assets/hero-desktop.png" media="(min-width: 769px)" />
+        <!-- Mobile fallback -->
+        <img src="assets/hero-mobile.png" alt="Global Data Capture" />
+      </picture>
+    </main>
 
     <footer class="footer">© Global Data Capture</footer>
   </body>
