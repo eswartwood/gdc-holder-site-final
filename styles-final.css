@@ -1,117 +1,102 @@
-/* ========== Base ========== */
-* { box-sizing: border-box; }
-html, body { height: 100%; }
-body {
-  margin: 0;
-  background: #000;              /* deep black backdrop */
-  color: #aaa;
-  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+/* ---------- Base ---------- */
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;
+  background:#000;
+  color:#aaa;
+  font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+  overflow-x:hidden;              /* never sideways scroll */
 }
 
-/* Tunables */
+/* ---------- Tunables ---------- */
 :root{
-  --poster-max: 1280px;          /* hard cap for huge desktops */
-  --glow-width: 10vw;            /* width of the side glow bands */
+  --poster-max: 1400px;           /* cap on ultra-wides */
+  --glow-w: 6vw;                  /* side glow width */
 
-  /* Vertical position of the art (negative = move image upward) */
-  --nudge-desktop: -12vh;
+  /* raise image (more negative = higher) */
+  --nudge-desktop: -10vh;
   --nudge-mobile:  -6vh;
 
-  /* Height of the poster area ( >100vh creates scroll ) */
-  --poster-height-desktop: 135vh;
-  --poster-height-mobile:  100vh;
+  /* total poster height (adds a little vertical scroll) */
+  --poster-h-desktop: 115vh;
+  --poster-h-mobile:  104vh;
 }
 
-/* ========== Stage ========== */
+/* ---------- Stage ---------- */
 .frame{
-  position: relative;
-  min-height: 100vh;
-  display: flex;
-  align-items: flex-start;        /* pin to top of viewport */
-  justify-content: center;
-  background: #000;
-  overflow-x: hidden;             /* allow scroll, but no horizontal wobble */
-  overflow-y: auto;
+  min-height:100vh;
+  display:flex;
+  align-items:flex-start;         /* pin art to the very top */
+  justify-content:center;
+  background:#000;
+  overflow-x:hidden;
 }
 
-/* Side glow bands (tasteful, premium look) */
+/* gold side glows (subtle) */
 .frame::before,
 .frame::after{
-  content: "";
-  position: fixed;                /* stick to viewport edges */
-  top: 0;
-  bottom: 0;
-  width: var(--glow-width);
-  pointer-events: none;
-  z-index: 0;
-  background:
-    linear-gradient(180deg,
-      rgba(255,215,0,0.00) 0%,
-      rgba(255,215,0,0.10) 12%,
-      rgba(255,215,0,0.22) 30%,
-      rgba(255,215,0,0.12) 65%,
-      rgba(255,215,0,0.00) 100%);
-  filter: blur(10px);
+  content:"";
+  position:fixed;
+  z-index:0;
+  top:0;bottom:0;
+  width:var(--glow-w);
+  pointer-events:none;
+  background:linear-gradient(180deg,
+    rgba(255,215,0,0) 0%,
+    rgba(255,215,0,0.10) 15%,
+    rgba(255,215,0,0.18) 45%,
+    rgba(255,215,0,0.10) 75%,
+    rgba(255,215,0,0) 100%);
+  filter:blur(8px);
 }
-.frame::before { left: 0; }
-.frame::after  { right: 0; }
+.frame::before{left:0}
+.frame::after{right:0}
 
-/* ========== Poster (the hero itself) ========== */
+/* ---------- Poster (hero) ---------- */
 .poster{
-  position: relative;
-  z-index: 1;
-  width: min(70vw, var(--poster-max));
-  height: var(--poster-height-desktop);     /* forces vertical scroll room */
-  margin: 0 auto;
-  display: block;
+  position:relative;
+  z-index:1;
+  width:min(78vw,var(--poster-max));
+  height:var(--poster-h-desktop);
+  margin:0 auto;
+  border-radius:12px;
+  box-shadow:0 40px 120px rgba(0,0,0,.55),0 10px 30px rgba(0,0,0,.35);
 
-  /* Paint the image as a CSS background so we can crop & position perfectly */
-  background-image: url("./assets/hero-desktop.png");
-  background-repeat: no-repeat;
-  background-size: cover;                    /* fill container */
-  background-position: center var(--nudge-desktop); /* raise the art */
-
-  border-radius: 12px;
-  box-shadow:
-    0 30px 80px rgba(0,0,0,0.55),
-    0 6px 18px rgba(0,0,0,0.35);
+  /* paint image as background for perfect crop & position */
+  background-image:url("./assets/hero-desktop.png");
+  background-repeat:no-repeat;
+  background-size:cover;                            /* fill container */
+  background-position:center var(--nudge-desktop);  /* lift image */
 }
 
-/* ========== Footer ========== */
+/* ---------- Footer (quiet) ---------- */
 .footer{
-  position: sticky;
-  bottom: 0;
-  z-index: 2;
-  text-align: center;
-  color: #888;
-  font-size: 12px;
-  padding: 12px 0 18px;
-  background: linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.65) 100%);
+  position:static;            /* no overlap */
+  text-align:center;
+  color:#888;
+  font-size:12px;
+  padding:10px 0 16px;
+  opacity:.65;
 }
 
-/* ========== Responsive ========== */
-@media (max-width: 1280px){
-  .poster{
-    width: min(82vw, var(--poster-max));
-  }
+/* ---------- Responsive ---------- */
+@media (max-width:1280px){
+  .poster{ width:min(88vw,var(--poster-max)); }
 }
 
-@media (max-width: 768px){
+@media (max-width:768px){
   :root{
-    --poster-height-mobile: 105vh;    /* give mobile a touch of scroll */
-    --nudge-mobile: -4vh;
+    --nudge-mobile:-5vh;
   }
   .poster{
-    width: 100vw;
-    height: var(--poster-height-mobile);
-    margin: 0;                        /* edge-to-edge on phones */
-    border-radius: 0;
-
-    background-image: url("./assets/hero-mobile.png");
-    background-position: center var(--nudge-mobile);
+    width:100vw;
+    height:var(--poster-h-mobile);
+    margin:0;
+    border-radius:0;
+    background-image:url("./assets/hero-mobile.png");
+    background-position:center var(--nudge-mobile);
+    box-shadow:none;
   }
-  .frame::before,
-  .frame::after{
-    width: 14vw;                       /* slimmer phones need thinner glow */
-  }
+  .frame::before,.frame::after{ width:10vw; }
 }
