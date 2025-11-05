@@ -1,88 +1,61 @@
-/* Base reset */
-*{box-sizing:border-box}
-html,body{height:100%}
-body{
-  margin:0;
-  background:#000;
-  color:#ccc;
-  font:16px system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
-  overflow-y:auto;
+/* ===== Base ===== */
+* { box-sizing: border-box; }
+html, body { height: 100%; margin: 0; background:#000; color:#ccc; font: 16px system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; }
+
+/* ===== Stage: fills screen, stacks hero + footer ===== */
+.stage {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: #000;           /* solid black borders/sides */
 }
 
-/* Stage holds the hero + footer */
-.stage{
-  min-height:100vh;
-  display:flex;
-  flex-direction:column;
+/* ===== Frame: exactly one viewport tall minus footer, crops overflow ===== */
+.frame {
+  position: relative;
+  height: calc(100vh - 44px); /* footer height (adjust if you change footer) */
+  overflow: hidden;
+  display: flex;
+  align-items: flex-start;     /* top-align image */
+  justify-content: center;     /* center horizontally */
+  background: #000;
 }
 
-/* Full-bleed hero pinned to the top */
-.hero{
-  position:relative;
-  width:100%;
-  height:100vh;        /* exactly one full screen */
-  overflow:hidden;
-  display:block;
-  background:#000;
+/* ===== Hero image ===== */
+.hero {
+  width: min(1200px, 100vw);   /* responsive width, max ~1200px */
+  height: auto;
+  display: block;
+  transform: translateY(-80px);/* <<< raise image (tweak -80 to taste) */
 }
 
-/* Poster image behavior */
-.hero img{
-  position:absolute;
-  inset:0 auto auto 50%;
-  transform:translateX(-50%);
-  width:100%;
-  height:100%;
-  object-fit:cover;          /* fill without distortion */
-  object-position:center -8vh; /* nudge UP (more negative = higher) */
-  display:block;
+/* Mobile tweak: a little less lift */
+@media (max-width: 768px) {
+  .hero {
+    width: 100vw;
+    transform: translateY(-40px);
+  }
 }
 
-/* Make the side edges feel premium but keep them black overall */
-.hero::before,
-.hero::after{
+/* ===== Footer ===== */
+.footer {
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffd34d;
+  font-size: 12px;
+  letter-spacing: .2px;
+  opacity: .9;
+  background: #000;
+  user-select: none;
+}
+
+/* (Optional) soft side glow — comment out if you don’t want it */
+.frame::before, .frame::after{
   content:"";
-  position:absolute;
-  top:0;bottom:0;
-  width:18vw;                 /* width of the vignette on each side */
-  pointer-events:none;
-  background:
-    radial-gradient(60% 60% at 50% 50%,
-      rgba(255,215,0,.06), rgba(0,0,0,0) 60%);
-  filter:blur(2px);
-  opacity:.45;
+  position:absolute; top:0; bottom:0; width:18px;
+  pointer-events:none; filter: blur(12px); opacity:.22;
 }
-.hero::before{left:0; background:
-  linear-gradient(90deg, rgba(0,0,0,1) 0%, rgba(0,0,0,.85) 30%, rgba(0,0,0,0) 100%),
-  radial-gradient(60% 60% at 50% 50%, rgba(255,215,0,.06), rgba(0,0,0,0) 60%);}
-.hero::after{right:0; background:
-  linear-gradient(270deg, rgba(0,0,0,1) 0%, rgba(0,0,0,.85) 30%, rgba(0,0,0,0) 100%),
-  radial-gradient(60% 60% at 50% 50%, rgba(255,215,0,.06), rgba(0,0,0,0) 60%);}
-
-/* Footer (small + no extra lines) */
-.footer{
-  margin:0;
-  padding:14px 0 18px;
-  text-align:center;
-  color:#d8d8d8;
-  font-size:12px;
-  opacity:.8;
-  background:#000;      /* ensures no stray line shows on some displays */
-  border:0;
-}
-
-/* Wide screens — push image a touch higher */
-@media (min-width: 1200px){
-  .hero img{ object-position:center -10vh; }
-}
-
-/* Smaller laptops — a hair less nudge */
-@media (max-width: 1024px){
-  .hero img{ object-position:center -6vh; }
-}
-
-/* Phones — keep centered, still slightly up */
-@media (max-width: 768px){
-  .hero{ height:100svh; }      /* mobile safe viewport height */
-  .hero img{ object-position:center -4vh; }
-}
+.frame::before{ left:0; background: linear-gradient(90deg, rgba(255,215,64,.35), rgba(0,0,0,0)); }
+.frame::after { right:0; background: linear-gradient(270deg, rgba(255,215,64,.35), rgba(0,0,0,0)); }
