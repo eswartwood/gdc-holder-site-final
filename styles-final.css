@@ -1,4 +1,4 @@
-/* ---------- BASE RESET ---------- */
+/* ---------- RESET ---------- */
 * {
   box-sizing: border-box;
   margin: 0;
@@ -10,46 +10,54 @@ html, body {
   background: #000;
   color: #fff;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
-  overflow-y: auto; /* allow scrolling */
+  overflow-x: hidden;
 }
 
-/* ---------- HERO SECTION ---------- */
+/* ---------- HERO CONTAINER ---------- */
 .hero {
   position: relative;
   width: 100%;
-  height: 100vh;
+  height: 92vh; /* fills nearly the full screen */
   background: #000;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
   overflow: hidden;
 }
 
-/* Main hero image styling */
+/* ---------- IMAGE INSIDE HERO ---------- */
 .hero::before {
   content: "";
   position: absolute;
   inset: 0;
-  background: url("./assets/hero-desktop.png") no-repeat center center;
-  background-size: contain; /* image scales proportionally with black borders */
+  background: url("./assets/hero-desktop.png") no-repeat top center;
+  background-size: cover; /* zooms in a bit — fills screen like Apple */
   background-color: #000;
+  transform: scale(1.15); /* gentle zoom-in effect to fill space */
   z-index: 0;
 }
 
-/* ---------- OPTIONAL TEXT OR FOOTER ---------- */
+/* ---------- FOOTER ---------- */
 .footer {
-  position: relative;
-  z-index: 1;
+  width: 100%;
   text-align: center;
-  color: rgba(255, 215, 0, 0.8);
-  padding: 20px;
-  font-size: 0.9rem;
+  color: rgba(255, 215, 0, 0.9);
+  font-size: 0.95rem;
+  letter-spacing: 0.05em;
+  padding: 30px 0;
+  background: #000;
+  border-top: 1px solid rgba(255, 215, 0, 0.2); /* subtle gold edge */
 }
 
 /* ---------- MOBILE OPTIMIZATION ---------- */
 @media (max-width: 768px) {
   .hero::before {
-    background: url("./assets/hero-mobile.png") no-repeat center top;
-    background-size: contain;
+    background: url("./assets/hero-mobile.png") no-repeat top center;
+    background-size: cover;
+    transform: scale(1.05);
+  }
+  .footer {
+    font-size: 0.85rem;
+    padding: 20px 0;
   }
 }
