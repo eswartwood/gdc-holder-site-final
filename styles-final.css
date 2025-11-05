@@ -1,153 +1,117 @@
-/* ========== Global / Reset ========== */
+/* ========== Base ========== */
 * { box-sizing: border-box; }
 html, body { height: 100%; }
 body {
   margin: 0;
-  background: #000;
+  background: #000;              /* deep black backdrop */
   color: #aaa;
   font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
 }
 
-/* Tunables (easy nudge up/down) */
+/* Tunables */
 :root{
-  --nudge-desktop: -10vh;  /* move image up (negative = up) */
+  --poster-max: 1280px;          /* hard cap for huge desktops */
+  --glow-width: 10vw;            /* width of the side glow bands */
+
+  /* Vertical position of the art (negative = move image upward) */
+  --nudge-desktop: -12vh;
   --nudge-mobile:  -6vh;
-  --poster-max:    1280px; /* cap for normal laptops */
-  --glow-width:    10vw;   /* width of side glow on big screens */
+
+  /* Height of the poster area ( >100vh creates scroll ) */
+  --poster-height-desktop: 135vh;
+  --poster-height-mobile:  100vh;
 }
 
-/* ========== Stage (fills viewport) ========== */
+/* ========== Stage ========== */
 .frame{
   position: relative;
   min-height: 100vh;
-  width: 100%;
   display: flex;
-  /* Pin content toward the top, still centered horizontally */
-  align-items: flex-start;
+  align-items: flex-start;        /* pin to top of viewport */
   justify-content: center;
-  overflow: hidden;
-
-  /* subtle starfield gradient for the canvas */
-  background:
-    radial-gradient(60% 80% at 50% 30%,
-      rgba(255,204,0,0.08) 0%,
-      rgba(255,204,0,0.03) 40%,
-      rgba(0,0,0,0.0) 70%),
-    #000;
+  background: #000;
+  overflow-x: hidden;             /* allow scroll, but no horizontal wobble */
+  overflow-y: auto;
 }
 
-/* dark vignette */
-.frame::before{
-  content:"";
-  position: absolute; inset: 0;
-  pointer-events: none;
-  background:
-    radial-gradient(110% 90% at 50% 10%,
-      rgba(0,0,0,0.0) 0%,
-      rgba(0,0,0,0.45) 75%,
-      rgba(0,0,0,0.75) 100%);
-}
-
-/* gold side glows (left + right) */
+/* Side glow bands (tasteful, premium look) */
+.frame::before,
 .frame::after{
-  content:"";
-  position: absolute; inset: 0;
+  content: "";
+  position: fixed;                /* stick to viewport edges */
+  top: 0;
+  bottom: 0;
+  width: var(--glow-width);
   pointer-events: none;
+  z-index: 0;
   background:
-    linear-gradient(90deg,
-      rgba(255,215,0,0.18) 0%,
-      rgba(255,215,0,0.05) 25%,
-      rgba(255,215,0,0.00) 40%,
-      rgba(255,215,0,0.00) 60%,
-      rgba(255,215,0,0.05) 75%,
-      rgba(255,215,0,0.18) 100%);
-  filter: blur(16px) saturate(120%);
-  mask: linear-gradient(#000, #000); /* keep it inside the frame */
+    linear-gradient(180deg,
+      rgba(255,215,0,0.00) 0%,
+      rgba(255,215,0,0.10) 12%,
+      rgba(255,215,0,0.22) 30%,
+      rgba(255,215,0,0.12) 65%,
+      rgba(255,215,0,0.00) 100%);
+  filter: blur(10px);
 }
+.frame::before { left: 0; }
+.frame::after  { right: 0; }
 
 /* ========== Poster (the hero itself) ========== */
 .poster{
   position: relative;
+  z-index: 1;
   width: min(70vw, var(--poster-max));
-  aspect-ratio: 16 / 9;              /* holds shape nicely on laptops/ultrawide */
+  height: var(--poster-height-desktop);     /* forces vertical scroll room */
+  margin: 0 auto;
   display: block;
 
-  /* Desktop hero image */
+  /* Paint the image as a CSS background so we can crop & position perfectly */
   background-image: url("./assets/hero-desktop.png");
   background-repeat: no-repeat;
-  background-size: cover;
+  background-size: cover;                    /* fill container */
+  background-position: center var(--nudge-desktop); /* raise the art */
 
-  /* nudge upward so the globe crown sits higher, like Apple */
-  background-position: center var(--nudge-desktop);
-
-  /* premium edge + lift */
+  border-radius: 12px;
   box-shadow:
-    0 12px 48px rgba(0,0,0,0.65),
-    inset 0 0 0 1px rgba(255,255,255,0.03);
-  border-radius: 2px;
-
-  /* small breathing room from absolute top */
-  margin-top: 2vh;
+    0 30px 80px rgba(0,0,0,0.55),
+    0 6px 18px rgba(0,0,0,0.35);
 }
 
-/* Optional label (you have it in index) */
-.poster .label{
-  position: absolute;
-  bottom: 56px;
-  left: 0; right: 0;
-  text-align: center;
-  font-size: 18px;
-  letter-spacing: 2px;
-  color: #d6b84e;
-  text-shadow: 0 0 22px rgba(255,215,0,0.70);
-}
-
-/* ========== Footer (tiny, centered) ========== */
+/* ========== Footer ========== */
 .footer{
-  position: fixed;
-  left: 0; right: 0; bottom: 10px;
+  position: sticky;
+  bottom: 0;
+  z-index: 2;
   text-align: center;
-  color: #8e8e8e;
+  color: #888;
   font-size: 12px;
-  letter-spacing: .5px;
-  pointer-events: none;
+  padding: 12px 0 18px;
+  background: linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.65) 100%);
 }
 
-/* ========== Laptops / standard desktops ========== */
-@media (max-width: 1600px){
+/* ========== Responsive ========== */
+@media (max-width: 1280px){
   .poster{
-    width: min(76vw, var(--poster-max));
-    background-position: center calc(var(--nudge-desktop) - 2vh);
+    width: min(82vw, var(--poster-max));
   }
 }
 
-/* ========== Mobile & narrow tablets ========== */
 @media (max-width: 768px){
-  .frame{
-    align-items: flex-start;          /* keep it high */
+  :root{
+    --poster-height-mobile: 105vh;    /* give mobile a touch of scroll */
+    --nudge-mobile: -4vh;
   }
   .poster{
     width: 100vw;
-    height: 100vh;                    /* go truly full-bleed on phones */
-    aspect-ratio: auto;
+    height: var(--poster-height-mobile);
+    margin: 0;                        /* edge-to-edge on phones */
     border-radius: 0;
-    margin-top: 0;
 
-    /* mobile hero image + mobile nudge */
     background-image: url("./assets/hero-mobile.png");
     background-position: center var(--nudge-mobile);
   }
-  .footer{ bottom: 8px; }
-}
-
-/* ========== Ultra-wide monitors (cinema displays) ========== */
-@media (min-width: 1900px){
-  .poster{
-    width: min(62vw, 1400px);
-    background-position: center calc(var(--nudge-desktop) - 1vh);
-  }
+  .frame::before,
   .frame::after{
-    /* a touch stronger glow on very wide canvases */
-    filter: blur(22px) saturate(125%);
+    width: 14vw;                       /* slimmer phones need thinner glow */
   }
 }
