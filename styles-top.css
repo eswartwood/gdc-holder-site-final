@@ -1,171 +1,56 @@
-/* ---------- Global reset ---------- */
-*,
-*::before,
-*::after { box-sizing: border-box; }
-
-html, body {
-  margin: 0;
-  padding: 0;
-  width: 100%;
-  height: 100%;
-}
-
+/* Reset / base */
+* { box-sizing: border-box; }
+html, body { height: 100%; }
 body {
-  background: radial-gradient(60% 60% at 50% 40%, #0c0c10 0%, #07070b 60%, #030306 100%);
+  margin: 0;
+  background: #0a0a0a;               /* pure dark backdrop */
   color: #ddd;
-  font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
-  line-height: 1.4;
-  overflow-x: hidden;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
 }
 
-/* ---------- Hero container ---------- */
-.hero {
-  position: relative;
-  display: flex;
-  justify-content: center;   /* center horizontally */
-  align-items: flex-start;   /* stick content to the top */
+/* --- Easy “move up” control (negative pulls image upward) --- */
+:root { --yNudge: -120px; }           /* tweak this number to move the hero up/down */
+
+/* Full-bleed hero */
+.hero{
   min-height: 100vh;
-  padding: 0;                /* remove any padding that could create a top band */
-  overflow: hidden;          /* hide negative margins / effects */
+  width: 100%;
+  /* Desktop image as background. We pin to the TOP and can nudge with var. */
+  background-image: url('assets/hero-desktop.png');
+  background-repeat: no-repeat;
+  background-size: cover;             /* fill width nicely */
+  background-position: center var(--yNudge);  /* top + upward nudge */
 }
 
-/* Ambient space glow behind the poster */
-.hero::before {
-  content: "";
-  position: absolute;
-  inset: -20vh -20vw -10vh -20vw;  /* extend beyond edges so no seams show */
-  z-index: 0;
-  pointer-events: none;
-  background:
-    radial-gradient(65% 55% at 50% 45%, rgba(255,204,48,0.10) 0%, rgba(255,204,48,0.04) 35%, rgba(0,0,0,0.75) 75%) ,
-    radial-gradient(80% 70% at 55% 30%, rgba(250,220,120,0.08) 0%, rgba(0,0,0,0.85) 70%);
-  animation: drift 22s ease-in-out infinite alternate;
-  filter: saturate(1.1);
-}
-
-/* Soft gold side rims (subtle, Apple-style) */
-.hero::after {
-  content: "";
+/* Optional: subtle vignette so edges blend with page background */
+.hero::after{
+  content:"";
   position: absolute;
   inset: 0;
-  z-index: 0;
   pointer-events: none;
-  background:
-    linear-gradient(90deg,
-      rgba(255,215,0,0.10) 0%,
-      rgba(0,0,0,0.0) 8%,
-      rgba(0,0,0,0.0) 92%,
-      rgba(255,215,0,0.10) 100%);
+  background: radial-gradient(60% 60% at 50% 40%, rgba(10,10,10,0) 0%, rgba(10,10,10,0) 55%, rgba(10,10,10,0.55) 100%);
 }
 
-/* ambient drift */
-@keyframes drift {
-  0%   { transform: translateY(-1.2%) translateX(-0.8%) scale(1.01); }
-  50%  { transform: translateY( 0.8%) translateX( 1.0%) scale(1.02); }
-  100% { transform: translateY(-0.6%) translateX( 0.2%) scale(1.015); }
-}
-
-/* ---------- Poster image ---------- */
-.hero-media {
-  position: relative;
-  z-index: 1;               /* above the glow */
-  display: block;
-  width: clamp(720px, 90vw, 1280px);   /* responsive width with desktop cap */
-  height: auto;
-  object-fit: cover;        /* lets us crop with clip-path while filling */
-  object-position: center 0%; /* show the very top of the art */
-  margin: -120px auto 0;   /* hard pull UP to eliminate any top band */
-  clip-path: inset(0 0 6% 0); /* keep a little trim at the bottom; no top crop */
-  filter: drop-shadow(0 0 12px rgba(255,215,0,0.22));
-  animation: fadeIn 800ms ease-out both;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(6px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-/* ---------- Footer ---------- */
-.footer {
-  position: relative;
-  z-index: 1;
+/* Footer (tiny, centered) */
+.footer{
   text-align: center;
-  color: #aaa;
+  color: #9aa0a6;
   font-size: 12px;
-  padding: 10px 24px 24px;
+  padding: 12px 24px;
 }
 
-/* ---------- Responsive tuning ---------- */
-
-/* Big laptops / smaller ultrawides */
-@media (max-width: 1600px) {
-  .hero-media {
-    margin: -100px auto 0;
-    clip-path: inset(0 0 7% 0);
-  }
-}
-
-/* Standard laptops */
-@media (max-width: 1280px) {
-  .hero-media {
-    margin: -80px auto 0;
-    width: clamp(640px, 92vw, 1120px);
-    clip-path: inset(0 0 8% 0);
-  }
-}
-
-/* Tablets */
-@media (max-width: 900px) {
-  .hero-media {
-    margin: -40px auto 0;
-    width: 94vw;
-    max-width: 980px;
-    clip-path: inset(0 0 8% 0);
-  }
-}
-
-/* Phones */
-@media (max-width: 768px) {
-  .hero-media {
-    margin: 0 auto;           /* no negative pull on phones */
-    width: 100vw;             /* fill phone width */
-    max-width: none;
-    object-position: center 0%;
-    clip-path: inset(0 0 0 0); /* show full poster on mobile */
-  }
-  .footer { padding: 8px 16px 20px; }
-}
-/* === FORCE HERO TO TOP (OVERRIDE) === */
-body, .hero { margin: 0 !important; padding: 0 !important; }
-.hero{
-  display:flex !important;
-  align-items:flex-start !important;
-  justify-content:center !important;
-  min-height:100vh !important;
-  overflow:hidden !important;
-}
-
-/* hard nudge upward */
-.hero-media{
-  display:block !important;
-  width: clamp(720px, 90vw, 1280px) !important;
-  height:auto !important;
-  object-fit:cover !important;
-  object-position:center 0% !important; /* show top */
-  margin: 0 auto 0 !important;
-  transform: translateY(-140px) !important;   /* <-- move up */
-  clip-path: inset(0 0 6% 0) !important;      /* keep slight bottom crop */
-  z-index:1 !important;
-}
-
-/* quick laptop/mobile tuning */
+/* Laptops / normal monitors: slightly less nudge */
 @media (max-width: 1280px){
-  .hero-media{ transform: translateY(-100px) !important; }
+  :root { --yNudge: -90px; }
 }
+
+/* Mobile: use the mobile artwork, center it at the top, no negative nudge */
 @media (max-width: 768px){
-  .hero-media{
-    transform: translateY(0) !important;     /* no pull on phones */
-    width: 100vw !important;
-    clip-path: inset(0 0 0 0) !important;
+  .hero{
+    background-image: url('assets/hero-mobile.png');
+    background-size: contain;         /* keep full poster visible on phones */
+    background-position: center top;  /* start at the very top */
+    background-color: #000;
   }
+  :root { --yNudge: 0px; }
 }
