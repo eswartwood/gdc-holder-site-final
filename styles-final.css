@@ -1,110 +1,153 @@
-/* ---------- Tunables (one place) ---------- */
-:root{
-  /* Move image up/down (negative moves UP) */
-  --lift-desktop: -180px;
-  --lift-mobile:  -60px;
-
-  /* Slight scale for drama (1.00 = no zoom) */
-  --zoom: 1.06;
-
-  /* Side glow color + strength */
-  --glow: 255, 215, 64;    /* golden */
-  --glow-alpha: 0.35;
-
-  /* Backdrop vignette strength */
-  --vignette: 0.55;
-}
-
-/* ---------- Base ---------- */
-*{ box-sizing:border-box; }
-html,body{ height:100%; }
-body{
-  margin:0;
-  color:#ddd;
+/* ========== Global / Reset ========== */
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+body {
+  margin: 0;
+  background: #000;
+  color: #aaa;
   font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-  background:#080b10;              /* deep space */
-  overflow-x:hidden;
 }
 
-/* ---------- Stage ---------- */
+/* Tunables (easy nudge up/down) */
+:root{
+  --nudge-desktop: -10vh;  /* move image up (negative = up) */
+  --nudge-mobile:  -6vh;
+  --poster-max:    1280px; /* cap for normal laptops */
+  --glow-width:    10vw;   /* width of side glow on big screens */
+}
+
+/* ========== Stage (fills viewport) ========== */
 .frame{
-  position:relative;
-  min-height:100vh;
-  display:flex;
-  align-items:flex-start;           /* start at the very top */
-  justify-content:center;
-  overflow:hidden;                  /* crop any zoom */
+  position: relative;
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  /* Pin content toward the top, still centered horizontally */
+  align-items: flex-start;
+  justify-content: center;
+  overflow: hidden;
+
+  /* subtle starfield gradient for the canvas */
   background:
-    radial-gradient(1200px 600px at 50% 20%, rgba(255,255,255,0.025), transparent 60%),
-    radial-gradient(900px 400px  at 50% 80%, rgba(255,255,255,0.02),  transparent 60%),
-    #0a0f15;
+    radial-gradient(60% 80% at 50% 30%,
+      rgba(255,204,0,0.08) 0%,
+      rgba(255,204,0,0.03) 40%,
+      rgba(0,0,0,0.0) 70%),
+    #000;
 }
 
-/* Vignette for cinematic feel */
+/* dark vignette */
 .frame::before{
   content:"";
-  position:absolute; inset:0;
-  pointer-events:none;
+  position: absolute; inset: 0;
+  pointer-events: none;
   background:
-    radial-gradient(150% 120% at 50% 50%, transparent 50%, rgba(0,0,0,var(--vignette)) 100%);
-  z-index:1;
+    radial-gradient(110% 90% at 50% 10%,
+      rgba(0,0,0,0.0) 0%,
+      rgba(0,0,0,0.45) 75%,
+      rgba(0,0,0,0.75) 100%);
 }
 
-/* Side “cooler than Apple” glow pillars */
+/* gold side glows (left + right) */
 .frame::after{
   content:"";
-  position:absolute; inset:0;
-  pointer-events:none; z-index:1;
+  position: absolute; inset: 0;
+  pointer-events: none;
   background:
     linear-gradient(90deg,
-      rgba(var(--glow),0)   0%,
-      rgba(var(--glow),var(--glow-alpha)) 8%,
-      rgba(var(--glow),0)  14%,
-      rgba(0,0,0,0)        50%,
-      rgba(var(--glow),0)  86%,
-      rgba(var(--glow),var(--glow-alpha)) 92%,
-      rgba(var(--glow),0)  100%
-    );
-  mix-blend-mode: screen;
-  filter: blur(18px);
+      rgba(255,215,0,0.18) 0%,
+      rgba(255,215,0,0.05) 25%,
+      rgba(255,215,0,0.00) 40%,
+      rgba(255,215,0,0.00) 60%,
+      rgba(255,215,0,0.05) 75%,
+      rgba(255,215,0,0.18) 100%);
+  filter: blur(16px) saturate(120%);
+  mask: linear-gradient(#000, #000); /* keep it inside the frame */
 }
 
-/* ---------- Poster (the hero artwork) ---------- */
+/* ========== Poster (the hero itself) ========== */
 .poster{
-  position:relative;
-  width:100vw;
-  height:100vh;                     /* full viewport */
-  background-position: center top;  /* anchor to the TOP */
-  background-repeat:no-repeat;
-  background-size: calc(100% * var(--zoom)) auto;  /* tasteful zoom */
-  transform: translateY(var(--lift-desktop));      /* ← move it up/down */
-  will-change: transform, background-position;
-  z-index:0;
-  /* Desktop hero by default */
-  background-image: url("assets/hero-desktop.png");
+  position: relative;
+  width: min(70vw, var(--poster-max));
+  aspect-ratio: 16 / 9;              /* holds shape nicely on laptops/ultrawide */
+  display: block;
+
+  /* Desktop hero image */
+  background-image: url("./assets/hero-desktop.png");
+  background-repeat: no-repeat;
+  background-size: cover;
+
+  /* nudge upward so the globe crown sits higher, like Apple */
+  background-position: center var(--nudge-desktop);
+
+  /* premium edge + lift */
+  box-shadow:
+    0 12px 48px rgba(0,0,0,0.65),
+    inset 0 0 0 1px rgba(255,255,255,0.03);
+  border-radius: 2px;
+
+  /* small breathing room from absolute top */
+  margin-top: 2vh;
 }
 
-/* Mobile swap + tune */
-@media (max-width: 768px){
-  .poster{
-    background-image: url("assets/hero-mobile.png");
-    transform: translateY(var(--lift-mobile));
-    background-size: calc(100% * var(--zoom)) auto;
-  }
+/* Optional label (you have it in index) */
+.poster .label{
+  position: absolute;
+  bottom: 56px;
+  left: 0; right: 0;
+  text-align: center;
+  font-size: 18px;
+  letter-spacing: 2px;
+  color: #d6b84e;
+  text-shadow: 0 0 22px rgba(255,215,0,0.70);
 }
 
-/* Optional ultra-wide tweak (keeps top crisp on big monitors) */
-@media (min-aspect-ratio: 21/9){
-  .poster{
-    background-size: calc(120% * var(--zoom)) auto;
-  }
-}
-
-/* ---------- Footer ---------- */
+/* ========== Footer (tiny, centered) ========== */
 .footer{
-  position:fixed; left:0; right:0; bottom:10px;
-  text-align:center; font-size:12px; color:#a9b0b8;
-  z-index:2;
-  user-select:none;
-  text-shadow:0 1px 2px rgba(0,0,0,0.6);
+  position: fixed;
+  left: 0; right: 0; bottom: 10px;
+  text-align: center;
+  color: #8e8e8e;
+  font-size: 12px;
+  letter-spacing: .5px;
+  pointer-events: none;
+}
+
+/* ========== Laptops / standard desktops ========== */
+@media (max-width: 1600px){
+  .poster{
+    width: min(76vw, var(--poster-max));
+    background-position: center calc(var(--nudge-desktop) - 2vh);
+  }
+}
+
+/* ========== Mobile & narrow tablets ========== */
+@media (max-width: 768px){
+  .frame{
+    align-items: flex-start;          /* keep it high */
+  }
+  .poster{
+    width: 100vw;
+    height: 100vh;                    /* go truly full-bleed on phones */
+    aspect-ratio: auto;
+    border-radius: 0;
+    margin-top: 0;
+
+    /* mobile hero image + mobile nudge */
+    background-image: url("./assets/hero-mobile.png");
+    background-position: center var(--nudge-mobile);
+  }
+  .footer{ bottom: 8px; }
+}
+
+/* ========== Ultra-wide monitors (cinema displays) ========== */
+@media (min-width: 1900px){
+  .poster{
+    width: min(62vw, 1400px);
+    background-position: center calc(var(--nudge-desktop) - 1vh);
+  }
+  .frame::after{
+    /* a touch stronger glow on very wide canvases */
+    filter: blur(22px) saturate(125%);
+  }
 }
