@@ -1,102 +1,55 @@
-/* ---------- Base ---------- */
-*{box-sizing:border-box}
-html,body{height:100%}
-body{
-  margin:0;
-  background:#000;
-  color:#aaa;
-  font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
-  overflow-x:hidden;              /* never sideways scroll */
+/* ---------- BASE RESET ---------- */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
-/* ---------- Tunables ---------- */
-:root{
-  --poster-max: 1400px;           /* cap on ultra-wides */
-  --glow-w: 6vw;                  /* side glow width */
-
-  /* raise image (more negative = higher) */
-  --nudge-desktop: -10vh;
-  --nudge-mobile:  -6vh;
-
-  /* total poster height (adds a little vertical scroll) */
-  --poster-h-desktop: 115vh;
-  --poster-h-mobile:  104vh;
+html, body {
+  height: 100%;
+  background: #000;
+  color: #fff;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+  overflow-y: auto; /* allow scrolling */
 }
 
-/* ---------- Stage ---------- */
-.frame{
-  min-height:100vh;
-  display:flex;
-  align-items:flex-start;         /* pin art to the very top */
-  justify-content:center;
-  background:#000;
-  overflow-x:hidden;
+/* ---------- HERO SECTION ---------- */
+.hero {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  background: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
 }
 
-/* gold side glows (subtle) */
-.frame::before,
-.frame::after{
-  content:"";
-  position:fixed;
-  z-index:0;
-  top:0;bottom:0;
-  width:var(--glow-w);
-  pointer-events:none;
-  background:linear-gradient(180deg,
-    rgba(255,215,0,0) 0%,
-    rgba(255,215,0,0.10) 15%,
-    rgba(255,215,0,0.18) 45%,
-    rgba(255,215,0,0.10) 75%,
-    rgba(255,215,0,0) 100%);
-  filter:blur(8px);
-}
-.frame::before{left:0}
-.frame::after{right:0}
-
-/* ---------- Poster (hero) ---------- */
-.poster{
-  position:relative;
-  z-index:1;
-  width:min(78vw,var(--poster-max));
-  height:var(--poster-h-desktop);
-  margin:0 auto;
-  border-radius:12px;
-  box-shadow:0 40px 120px rgba(0,0,0,.55),0 10px 30px rgba(0,0,0,.35);
-
-  /* paint image as background for perfect crop & position */
-  background-image:url("./assets/hero-desktop.png");
-  background-repeat:no-repeat;
-  background-size:cover;                            /* fill container */
-  background-position:center var(--nudge-desktop);  /* lift image */
+/* Main hero image styling */
+.hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: url("./assets/hero-desktop.png") no-repeat center center;
+  background-size: contain; /* image scales proportionally with black borders */
+  background-color: #000;
+  z-index: 0;
 }
 
-/* ---------- Footer (quiet) ---------- */
-.footer{
-  position:static;            /* no overlap */
-  text-align:center;
-  color:#888;
-  font-size:12px;
-  padding:10px 0 16px;
-  opacity:.65;
+/* ---------- OPTIONAL TEXT OR FOOTER ---------- */
+.footer {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  color: rgba(255, 215, 0, 0.8);
+  padding: 20px;
+  font-size: 0.9rem;
 }
 
-/* ---------- Responsive ---------- */
-@media (max-width:1280px){
-  .poster{ width:min(88vw,var(--poster-max)); }
-}
-
-@media (max-width:768px){
-  :root{
-    --nudge-mobile:-5vh;
+/* ---------- MOBILE OPTIMIZATION ---------- */
+@media (max-width: 768px) {
+  .hero::before {
+    background: url("./assets/hero-mobile.png") no-repeat center top;
+    background-size: contain;
   }
-  .poster{
-    width:100vw;
-    height:var(--poster-h-mobile);
-    margin:0;
-    border-radius:0;
-    background-image:url("./assets/hero-mobile.png");
-    background-position:center var(--nudge-mobile);
-    box-shadow:none;
-  }
-  .frame::before,.frame::after{ width:10vw; }
 }
